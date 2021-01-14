@@ -91,6 +91,7 @@ namespace Consumer
             };
 
             // Declare and bind retry Exchange and retry queue.
+            // Note: Retry queue may not be deleted.
             SetupExchangeAndQueue(channel, RETRY_EXCHANGE_NAME, RETRY_QUEUE_NAME, headers, arguments);
         }
 
@@ -100,7 +101,7 @@ namespace Consumer
             channel.ExchangeDeclare(exchangeName, ExchangeType.Headers, autoDelete: true);
 
             // Note: Can change autoDelete to true to keep the queue to hold offline retries.
-            channel.QueueDeclare(queueName, true, false, true, arguments);
+            channel.QueueDeclare(queueName, false, false, true, arguments);
             channel.QueueBind(queueName, exchangeName, string.Empty, headers);
         }
 

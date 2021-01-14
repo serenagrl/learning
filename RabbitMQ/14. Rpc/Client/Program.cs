@@ -32,7 +32,7 @@ namespace Client
                         Console.Write(".");
                         Thread.Sleep(1000);
                     }
-                    Console.WriteLine($"done.");
+                    Console.WriteLine($" done.");
                 }
 
                 Console.WriteLine($"{times} numbers requested.");

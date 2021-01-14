@@ -54,7 +54,7 @@ namespace Consumer
             // Main queue.
             // Note: Dynamic queue names will cause duplicates if multiple clients are running.
             string queueName = channel.QueueDeclare($"{QUEUE_NAME_PREFIX}.{routingKey}",
-               exclusive:false, arguments: arguments).QueueName;
+               false, false, true, arguments).QueueName;
 
             // Bind queue to exchange with routing key.
             channel.QueueBind(queueName, EXCHANGE_NAME, routingKey);
@@ -73,7 +73,7 @@ namespace Consumer
             // Retry queue.
             // Note: Queue may not auto delete.
             string retryQueueName = channel.QueueDeclare($"{queueName}.retry",
-                exclusive:false, autoDelete:true, arguments: retryArguments).QueueName;
+                false, false, true, retryArguments).QueueName;
 
             // Bind queue to exchange with routing key.
             channel.QueueBind(retryQueueName, RETRY_EXCHANGE_NAME, routingKey);

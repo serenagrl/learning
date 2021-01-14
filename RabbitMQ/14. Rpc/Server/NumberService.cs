@@ -39,7 +39,7 @@ namespace Server
             _channel = _connection.CreateModel();
 
             // Declaring and setting queue properties.
-            _channel.QueueDeclare(QUEUE_NAME, false, false, false);
+            _channel.QueueDeclare(QUEUE_NAME, false, false, true);
             _channel.BasicQos(0, 1, false);
 
             // Start listening.

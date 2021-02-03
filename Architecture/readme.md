@@ -13,7 +13,7 @@ be overly simplistic but they serve as a starter guide.
 **Layered**                - Some small samples to illustrate Layered Architecture.
 1. **Api-Without-DI**      - Traditional layered Web Api sample in .net 4.x without Dependency Injection
 2. **Api-With-DI**         - Layered Web Api sample in .net core/.net 5. with Dependency Injection
-3. **Modern.Naming.Api**   - Suggested modernization of naming convention fot layered components.
+3. **Modern.Naming.Api**   - Suggested modernized naming conventions for layered components.
 
 ## Disclaimer
 

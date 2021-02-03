@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Sample.Business\Sample.Business.csproj" />
+    <ProjectReference Include="..\Sample.Entities\Sample.Entities.csproj" />
+  </ItemGroup>
+
+
+</Project>

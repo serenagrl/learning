@@ -19,6 +19,7 @@ docker run -d --rm -p:6379:6379 --name redis redis:latest
 ## Samples
 
 1. **Caching.Basic**            - Caching in asp.net core web api.
+2. Reserved                     - Reserved for future due to sample not working.
 3. **PubSub.Ordered**           - Publish & Subscribe with ordered messages.
 4. **PubSub.Unordered**         - Publish & Subscribe with unordered messages.
 5. **Queue.Basic**              - Basic Queue example.

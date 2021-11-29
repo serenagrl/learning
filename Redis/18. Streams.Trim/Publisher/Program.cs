@@ -1,0 +1,160 @@
+﻿// ==================================================================================
+// Developed by Serena Yeoh - November 2021
+// Disclaimer: 
+//   I wrote this for my self-learning and some parts may not be that accurate.
+//   So follow at your own risks ;p
+// ==================================================================================
+using StackExchange.Redis;
+
+namespace Publisher
+{
+    class Program
+    {
+        private const string KEY_NAME = "Telemetry.Small";
+        private const int MAX_SIZE = 5;
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Message Publisher\n");
+
+            // Connects to the redis server.
+            using var redis = ConnectionMultiplexer.Connect("localhost");
+            var db = redis.GetDatabase(); // Get database.
+
+            ConsoleKey input;
+
+            do
+            {
+                Console.Write("[Enter] to send 5 messages, [T]rim stream length [I]nformation [X] to exit: ");
+                input = Console.ReadKey().Key;
+                Console.WriteLine();
+
+                if (input == ConsoleKey.T)
+                {
+                    Console.Write("Trim stream length to: ");
+                    if (int.TryParse(Console.ReadLine(), out int size))
+                    {
+                        // Trim the stream length.
+                        db.StreamTrim(KEY_NAME, size);
+                    }
+                    Console.WriteLine();
+                }
+
+                if (input == ConsoleKey.I) ShowInfo(db);
+                if (input != ConsoleKey.Enter) continue;
+
+                SendMessage(db, 5);
+
+            } while (input != ConsoleKey.X);
+
+            // House-keeping - removes the stream.
+            Console.WriteLine("Housekeeping - Deleting stream.");
+            db.KeyDelete(KEY_NAME);
+
+        }
+
+        private static void SendMessage(IDatabase db, int count = 1)
+        {
+            Console.WriteLine($"\n  No.\tStream-Id\t  Temperature\tHumidity");
+            Console.WriteLine("  ---\t---------------\t  -----------\t--------");
+
+            var rand = new Random();
+            double temperature;
+            double humidity;
+
+            for (int i = 0; i < count; i++)
+            {
+                temperature = rand.Next(10, 50) + rand.NextDouble();
+                humidity = rand.Next(50, 90) + rand.NextDouble();
+
+                // Create entries.
+                var values = new NameValueEntry[]
+                {
+                    // Randomize some telemetry data
+                    new NameValueEntry("Temperature", temperature),
+                    new NameValueEntry("Humidity", humidity),
+                };
+
+                // Push to stream.
+                var id = db.StreamAdd(KEY_NAME, values, maxLength: MAX_SIZE);
+
+                Console.Write($"  {i + 1, 2}.\t");
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write($"{id}\t  ");
+                Console.ResetColor();
+
+                // Read the values in the entry.
+                Console.Write($"{temperature, 11:0.00}\t");
+                Console.Write($"{humidity, 8:0.00}\t");
+
+                Console.WriteLine();
+            }
+
+            Console.WriteLine();
+        }
+
+        private static void ShowInfo(IDatabase db)
+        {
+            // Get Stream info.
+            var streamInfo = db.StreamInfo(KEY_NAME);
+            Console.WriteLine($"\nStream Name: {KEY_NAME} ");
+            Console.WriteLine($"Total Messages: {streamInfo.Length} ");
+            Console.WriteLine($"Last Generated Id: {streamInfo.LastGeneratedId} ");
+            Console.WriteLine($"Total Consumer Groups: {streamInfo.ConsumerGroupCount} ");
+
+            // Get Consumer Groups info.
+            var groupInfo = db.StreamGroupInfo(KEY_NAME);
+            foreach (var info in groupInfo)
+            {
+                Console.WriteLine($"\nConsumer Group Name: {info.Name} ");
+                Console.WriteLine($"Total Consumers: {info.ConsumerCount} ");
+                Console.WriteLine($"Total Pending Messages: {info.PendingMessageCount} ");
+
+                // Get all the consumers in the consumer group.
+                var consumers = db.StreamConsumerInfo(KEY_NAME, info.Name);
+                if (consumers.Length > 0)
+                {
+                    Console.WriteLine($"List of Consumers:");
+
+                    // Dump out the Consumer names.
+                    foreach (var c in consumers)
+                        Console.WriteLine($"  {c.Name} - {c.PendingMessageCount} pending messages, Idle: {TimeSpan.FromMilliseconds(c.IdleTimeInMilliseconds).ToString()}.");
+
+                    Console.WriteLine();
+                }
+
+                Console.WriteLine($"Last Delivered Id: {info.LastDeliveredId} ");
+
+                // Get list of unread entries.
+                var entries = db.StreamRange(KEY_NAME, $"({info.LastDeliveredId}", "+");
+                Console.WriteLine($"Total unread messages: {entries.Length}");
+
+                if (entries.Length <= 0) return;
+
+                Console.WriteLine($"\n  No.\tStream-Id\t  Temperature\tHumidity");
+                Console.WriteLine("  ---\t---------------\t  -----------\t--------");
+
+                int seq = 0;
+
+                // Read the entries.
+                foreach (var entry in entries)
+                {
+                    Console.Write($"  {++seq,2}.\t");
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write($"{entry.Id}\t  ");
+                    Console.ResetColor();
+
+                    // Read the values in the entry.
+                    Console.Write($"{((double)entry["Temperature"]),11:0.00}\t");
+                    Console.Write($"{((double)entry["Humidity"]),8:0.00}\t");
+
+                    Console.WriteLine();
+                }
+
+                Console.WriteLine();
+            }
+        }
+    }
+}

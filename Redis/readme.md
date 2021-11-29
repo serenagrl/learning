@@ -37,6 +37,12 @@ docker run -d --rm -p:6379:6379 --name redis redis:latest
 17. **Streams.Auto**            - Complete example with automatic requeue and poison message handling.
 18. **Streams.Trim**            - Trim streams length.
 
+## High-Availablity Setup Guide
+
+I also did some high-availability learning for Redis.
+
+**High-Availability Setup**     - Redis Cluster and Redis Sentinel setup guide on Docker, Kubernetes or using Helm.
+
 ## Disclaimer
 
 Everything is based on my own self learning and understanding. Please pardon any mistakes

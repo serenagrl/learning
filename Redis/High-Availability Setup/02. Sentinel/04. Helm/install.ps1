@@ -1,0 +1,1 @@
+helm install redis-sentinel -f sentinel.yaml bitnami/redis

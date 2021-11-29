@@ -1,0 +1,97 @@
+version: '3.8'
+
+services:
+  redis-1:
+    image: redis:6.2.6-alpine
+    container_name: redis-1
+    hostname: redis-1
+    command: redis-server /etc/redis/redis.conf
+    networks:
+      redis:
+        ipv4_address: 172.19.1.1
+    volumes:
+      - ./conf:/etc/redis/
+
+  redis-2:
+    image: redis:6.2.6-alpine
+    container_name: redis-2
+    hostname: redis-2
+    command: redis-server /etc/redis/redis.conf
+    depends_on:    
+      - redis-1
+    networks:
+      redis:
+        ipv4_address: 172.19.1.2
+    volumes:
+      - ./conf:/etc/redis/
+
+  redis-3:
+    image: redis:6.2.6-alpine
+    container_name: redis-3
+    hostname: redis-3
+    command: redis-server /etc/redis/redis.conf
+    depends_on:    
+      - redis-2
+    networks:
+      redis:
+        ipv4_address: 172.19.1.3
+    volumes:
+      - ./conf:/etc/redis/
+
+  redis-4:
+    image: redis:6.2.6-alpine
+    container_name: redis-4
+    hostname: redis-4
+    command: redis-server /etc/redis/redis.conf
+    depends_on:    
+      - redis-3
+    networks:
+      redis:
+        ipv4_address: 172.19.1.4
+    volumes:
+      - ./conf:/etc/redis/
+
+  redis-5:
+    image: redis:6.2.6-alpine
+    container_name: redis-5
+    hostname: redis-5
+    command: redis-server /etc/redis/redis.conf
+    depends_on:    
+      - redis-4
+    networks:
+      redis:
+        ipv4_address: 172.19.1.5
+    volumes:
+      - ./conf:/etc/redis/
+
+  redis-6:
+    image: redis:6.2.6-alpine
+    container_name: redis-6
+    hostname: redis-6
+    command: redis-server /etc/redis/redis.conf
+      
+    depends_on:    
+      - redis-5
+    networks:
+      redis:
+        ipv4_address: 172.19.1.6
+    volumes:
+      - ./conf:/etc/redis/
+
+  redis-cli:  
+    image: redis:6.2.6-alpine
+    container_name: redis-cluster-cli
+    hostname: redis-cluster-cli
+    links:
+      - redis-6
+    command: redis-cli --cluster create 172.19.1.1:6379 172.19.1.2:6379 172.19.1.3:6379 172.19.1.4:6379 172.19.1.5:6379 172.19.1.6:6379 --cluster-replicas 1 --cluster-yes
+    networks:
+      - redis
+
+networks:
+  redis:
+    name: redis
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.19.0.0/16

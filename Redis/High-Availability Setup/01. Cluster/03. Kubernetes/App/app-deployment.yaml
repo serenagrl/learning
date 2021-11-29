@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: redis-cluster-secrets
+type: Opaque
+data: 
+  redis.connection: cmVkaXMscGFzc3dvcmQ9cEBzc3cwcmQ=
+  
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-cluster-test
+spec:
+  type: NodePort
+  clusterIP: 10.96.0.2
+  
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30008
+    name: http
+    protocol: TCP  
+    
+  selector:
+    app: redis-cluster-test
+    
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis-cluster-test
+  labels:
+        app: redis-cluster-test
+spec:
+  containers:
+  - name: cluster-testapp
+    image: clustertestapp
+    imagePullPolicy: IfNotPresent
+    ports:
+    - containerPort: 80
+      name: http
+    - containerPort: 443
+      name: https
+      
+    env:
+    - name: ConnectionStrings__Redis
+      # value: "redis,password=p@ssw0rd" 
+      valueFrom:
+        secretKeyRef:
+          name: redis-cluster-secrets
+          key: redis.connection

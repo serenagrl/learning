@@ -1,0 +1,1 @@
+helm install redis-cluster -f cluster.yaml bitnami/redis-cluster

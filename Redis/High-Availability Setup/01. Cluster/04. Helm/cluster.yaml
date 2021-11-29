@@ -1,0 +1,11 @@
+# values.yaml
+
+global:
+  storageClass: "hostpath"
+  redis:
+    password: "p@ssw0rd"
+  
+persistence:
+  accessModes: [ "ReadWriteOnce" ]
+  size: 2Mi
+  

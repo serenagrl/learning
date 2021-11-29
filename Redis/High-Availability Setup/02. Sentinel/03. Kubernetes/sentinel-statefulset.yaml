@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sentinel
+spec:
+  serviceName: sentinel
+  replicas: 3
+  selector:
+    matchLabels:
+      app: sentinel
+  template:
+    metadata:
+      labels:
+        app: sentinel
+    spec:
+      containers:
+      - name: sentinel
+        image: redis:6.2.6-alpine
+        command: ["/conf/startup.sh", "redis-sentinel", "/etc/redis/sentinel.conf"]
+
+        env:
+        - name: REDIS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: redis-auth
+              key: password
+
+        ports:
+        - containerPort: 5000
+          name: sentinel
+        
+        volumeMounts:
+        - name: sentinel-config
+          mountPath: /etc/redis/
+        - name: config
+          mountPath: /conf/
+        - name: data
+          mountPath: /data
+      
+      volumes:
+      - name: sentinel-config
+        emptyDir: {}
+      - name: config
+        configMap:
+          name: sentinel-config
+          defaultMode: 0755      
+
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "hostpath"
+      resources:
+        requests:
+          storage: 2Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sentinel
+spec:
+  clusterIP: None
+  ports:
+  - port: 5000
+    targetPort: 5000
+    name: sentinel
+  selector:
+    app: sentinel

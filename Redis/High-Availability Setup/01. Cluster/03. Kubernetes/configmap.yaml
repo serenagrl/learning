@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: redis-config
+data:
+  announce-ip.sh: |
+    #!/bin/sh
+    cp /tmp/redis/redis.conf /etc/redis/redis.conf
+    echo "inserting cluster-announce-ip into redis.conf ..."
+    echo "masterauth $REDIS_PASSWORD
+    requirepass $REDIS_PASSWORD
+    cluster-announce-ip $POD_IP" >> /etc/redis/redis.conf
+    exec "$@"
+    
+  redis.conf: |
+    cluster-enabled yes
+    cluster-config-file /data/nodes.conf
+    cluster-node-timeout 5000
+    appendonly yes
+    protected-mode no

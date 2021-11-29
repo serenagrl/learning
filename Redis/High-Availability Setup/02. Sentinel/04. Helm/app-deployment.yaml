@@ -1,0 +1,52 @@
+# apiVersion: v1
+# kind: Secret
+# metadata:
+  # name: redis-sentinel-secrets
+# type: Opaque
+# data: 
+  # redis.connection: c2VudGluZWw6NTAwMCxwYXNzd29yZD1wQHNzdzByZCxhYm9ydENvbm5lY3Q9ZmFsc2Usc2VydmljZU5hbWU9cmVkaXNtYXN0ZXI=
+
+# ---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-sentinel-test
+spec:
+  type: NodePort
+  clusterIP: 10.96.0.2
+  
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30008
+    name: http
+    protocol: TCP  
+    
+  selector:
+    app: redis-sentinel-test
+    
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: redis-sentinel-test
+  labels:
+        app: redis-sentinel-test
+spec:
+  containers:
+  - name: sentinel-testapp
+    image: sentineltestapp
+    imagePullPolicy: IfNotPresent
+    ports:
+    - containerPort: 80
+      name: http
+    - containerPort: 443
+      name: https
+      
+    env:
+    - name: ConnectionStrings__Redis
+      value: "redis-sentinel:26379,password=p@ssw0rd,abortConnect=false,serviceName=redismaster"
+      # valueFrom:
+        # secretKeyRef:
+          # name: redis-sentinel-secrets
+          # key: redis.connection

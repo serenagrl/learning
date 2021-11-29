@@ -1,0 +1,21 @@
+# values.yaml
+
+global:
+  storageClass: "hostpath"
+
+auth:
+  password: "p@ssw0rd"
+  
+master:
+  persistence:
+    accessModes: [ "ReadWriteOnce" ]
+    size: 2Mi
+  
+replica:
+  persistence:
+    accessModes: [ "ReadWriteOnce" ]
+    size: 2Mi
+
+sentinel:
+  enabled: true
+  masterSet: redismaster

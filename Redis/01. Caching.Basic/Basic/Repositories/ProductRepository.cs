@@ -31,12 +31,12 @@ namespace Basic.Repositories
             return result;
         }
 
-        public Product Select(long productId)
+        public Product Select(long id)
         {
-            const string SQL_STATEMENT = "SELECT * FROM Products WHERE ProductId=@ProductId";
+            const string SQL_STATEMENT = "SELECT * FROM Products WHERE Id=@id";
 
             using var cn = new SqlConnection(_connectionString);
-            var result = cn.QuerySingleOrDefault<Product>(SQL_STATEMENT, new { ProductId = productId });
+            var result = cn.QuerySingleOrDefault<Product>(SQL_STATEMENT, new { Id = id });
             cn.Close(); // Play safe.
 
             return result;

@@ -31,6 +31,7 @@ Internet for RabbitMQ installation guides.
 13. **Poison.Messages**         - Handling poison messages in dead-letter queues.
 14. **Rpc**                     - Using RabbitMQ Rpc features.
 15. **Custom.Classes**          - Creating custom classes to make the implementation cleaner.
+16. **Heartbeat**               - Detecting connection to RabbitMQ host.
 
 ## Disclaimer
 

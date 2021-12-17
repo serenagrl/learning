@@ -20,8 +20,9 @@ namespace Consumer
         public string RoutingKey { get; }
         public string Queue { get; }
 
-        public DirectConsumer(string hostname, string userName, string password,
-            string exchange, string routingKey)
+        public DirectConsumer(string exchange, string routingKey,
+            string hostname = "localhost", string userName = ConnectionFactory.DefaultUser, 
+            string password = ConnectionFactory.DefaultPass)
         {
             this.Hostname = hostname;
             this.Exchange = exchange;

@@ -17,9 +17,6 @@ namespace Consumer
         {
             var factory = new ConnectionFactory() 
             { 
-                HostName = "localhost", 
-                UserName = "guest", 
-                Password="p@ssw0rd",
                 RequestedHeartbeat = TimeSpan.FromSeconds(30)
             };
 

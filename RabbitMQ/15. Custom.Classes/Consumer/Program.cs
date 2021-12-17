@@ -17,8 +17,7 @@ namespace Consumer
         {
             string routingKey = GetSelection();
 
-            using var channel = new DirectConsumer("localhost", "guest","p@ssw0rd",
-                EXCHANGE_NAME, routingKey);
+            using var channel = new DirectConsumer(EXCHANGE_NAME, routingKey);
 
             channel.Consume();
             Console.ReadKey();

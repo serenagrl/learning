@@ -21,12 +21,8 @@ namespace Consumer
             Console.WriteLine("Launch two or more Consumer instances to test.");
             Console.WriteLine("Consumer started. Waiting to process messages...");
 
-            var factory = new ConnectionFactory()
-            {
-                HostName = "localhost",
-                UserName = "guest",
-                Password = "p@ssw0rd"
-            };
+            // Default connection settings - localhost, guest/guest
+            var factory = new ConnectionFactory();
 
             using var connection = factory.CreateConnection();
             using var channel = connection.CreateModel();

@@ -15,12 +15,8 @@ namespace Producer
         private const string QUEUE_NAME = "learning.manual.acknack";
         static void Main(string[] args)
         {
-            var factory = new ConnectionFactory()
-            {
-                HostName = "localhost",
-                UserName = "guest",
-                Password = "p@ssw0rd"
-            };
+            // Default connection settings - localhost, guest/guest
+            var factory = new ConnectionFactory();
 
             using var connection = factory.CreateConnection();
             using var channel = connection.CreateModel();

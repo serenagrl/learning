@@ -20,8 +20,9 @@ namespace Producer
         public string RoutingKey { get; }
         public string Queue { get; }
 
-        public DirectProducer(string hostname, string userName, string password,
-            string exchange)
+        public DirectProducer(string exchange,
+            string hostname = "localhost", string userName = ConnectionFactory.DefaultUser,
+            string password = ConnectionFactory.DefaultPass)
         {
             this.Hostname = hostname;
             this.Exchange = exchange;

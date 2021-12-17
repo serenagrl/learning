@@ -32,12 +32,8 @@ namespace Client
 
         public NumberAgent()
         {
-            var factory = new ConnectionFactory()
-            {
-                HostName = "localhost",
-                UserName = "guest",
-                Password = "p@ssw0rd",
-            };
+            // Default connection settings - localhost, guest/guest
+            var factory = new ConnectionFactory();
 
             // Initialization.
             _connection = factory.CreateConnection();

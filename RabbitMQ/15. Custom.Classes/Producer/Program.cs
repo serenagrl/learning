@@ -15,7 +15,7 @@ namespace Producer
 
         static void Main(string[] args)
         {
-            using var channel = new DirectProducer("localhost", "guest", "p@ssw0rd", EXCHANGE_NAME);
+            using var channel = new DirectProducer(EXCHANGE_NAME);
 
             while (true)
             {
